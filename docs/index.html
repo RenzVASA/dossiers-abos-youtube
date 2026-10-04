@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dossiers d'abos pour YouTube</title>
+<meta name="description" content="Extension gratuite pour ranger tes abonnements YouTube dans des dossiers et filtrer ton fil par dossier. Chrome, Opera GX, Edge, Brave.">
+<meta property="og:title" content="Dossiers d'abos pour YouTube">
+<meta property="og:description" content="Tes abonnements YouTube, enfin rangés. Dossiers, filtres et tri automatique.">
+<meta property="og:image" content="img/banner.png">
+<link rel="icon" href="img/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0f0f12; --bg2:#17171c; --card:#1c1c22; --fg:#f4f1ea; --muted:#a29d94; --line:rgba(255,255,255,.09);
+    --accent:#ffc14d; --accent-ink:#1a1305;
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; background:radial-gradient(900px 420px at 68% 120px, rgba(255,193,77,.16), transparent 70%) no-repeat, radial-gradient(700px 400px at 25% 220px, rgba(62,166,255,.10), transparent 70%) no-repeat, var(--bg); color:var(--fg); font:16px/1.6 Inter, system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:inherit; }
+  img { max-width:100%; display:block; }
+  .wrap { width:min(1120px, 100% - 32px); margin:0 auto; }
+
+  nav { display:flex; align-items:center; justify-content:space-between; padding:20px 0; }
+  .brand { display:flex; align-items:center; gap:10px; font-weight:600; text-decoration:none; }
+  .brand img { width:32px; height:32px; }
+  nav .links { display:flex; gap:22px; font-size:15px; color:var(--muted); }
+  nav .links a { text-decoration:none; }
+  nav .links a:hover { color:var(--fg); }
+
+  .hero { padding:56px 0 40px; text-align:center; }
+  .tag { display:inline-flex; gap:8px; align-items:center; border:1px solid var(--line); background:rgba(255,255,255,.04); border-radius:99px; padding:6px 14px; font-size:13px; color:var(--muted); }
+  h1 { font-size:clamp(38px, 6.4vw, 72px); line-height:1.02; letter-spacing:-.035em; font-weight:800; margin:22px auto 18px; max-width:880px; }
+  h1 em { font-style:normal; color:var(--accent); }
+  .lead { font-size:clamp(17px, 2vw, 20px); color:var(--muted); max-width:640px; margin:0 auto 32px; }
+  .cta { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+  .btn { display:inline-flex; align-items:center; gap:8px; height:48px; padding:0 22px; border-radius:12px; font-weight:600; text-decoration:none; font-size:16px; transition:transform .15s, background .15s; }
+  .btn:hover { transform:translateY(-1px); }
+  .btn.pri { background:var(--accent); color:var(--accent-ink); }
+  .btn.sec { border:1px solid var(--line); background:rgba(255,255,255,.04); }
+  .btn.sec:hover { background:rgba(255,255,255,.08); }
+  .small { font-size:13px; color:var(--muted); margin-top:14px; }
+  .hero-shot { margin:56px auto 0; border-radius:16px; overflow:hidden; box-shadow:0 40px 100px rgba(0,0,0,.6), 0 0 0 1px var(--line); }
+
+  section { padding:80px 0; }
+  .kicker { color:var(--accent); font-weight:600; font-size:14px; letter-spacing:.06em; text-transform:uppercase; }
+  h2 { font-size:clamp(28px, 4vw, 42px); letter-spacing:-.025em; line-height:1.1; margin:10px 0 14px; font-weight:800; }
+  .sub { color:var(--muted); max-width:620px; margin:0; }
+
+  .feature { display:grid; grid-template-columns:1fr 1.35fr; gap:48px; align-items:center; margin-top:64px; }
+  .feature.rev { grid-template-columns:1.35fr 1fr; }
+  .feature.rev .txt { order:2; }
+  .feature h3 { font-size:24px; margin:0 0 10px; letter-spacing:-.01em; }
+  .feature p { color:var(--muted); margin:0 0 12px; }
+  .feature ul { margin:0; padding:0; list-style:none; display:grid; gap:8px; color:var(--muted); }
+  .feature li::before { content:"→ "; color:var(--accent); }
+  .shot { border-radius:14px; overflow:hidden; box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 0 1px var(--line); }
+
+  .grid3 { display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; margin-top:40px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:22px; }
+  .card .ico { font-size:26px; }
+  .card h4 { margin:10px 0 6px; font-size:17px; }
+  .card p { margin:0; color:var(--muted); font-size:15px; }
+
+  .steps { counter-reset:s; display:grid; gap:14px; margin-top:36px; max-width:760px; }
+  .step { display:flex; gap:18px; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px 20px; }
+  .step::before { counter-increment:s; content:counter(s); flex:none; width:32px; height:32px; border-radius:50%; background:var(--accent); color:var(--accent-ink); font-weight:800; display:flex; align-items:center; justify-content:center; }
+  .step b { display:block; margin-bottom:2px; }
+  .step span { color:var(--muted); font-size:15px; }
+  code { font-family:ui-monospace, "SF Mono", Menlo, monospace; font-size:.9em; background:rgba(255,255,255,.08); padding:2px 6px; border-radius:6px; color:var(--fg); }
+
+  details { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px 20px; margin-top:12px; max-width:760px; }
+  summary { cursor:pointer; font-weight:600; }
+  details p { color:var(--muted); margin:10px 0 0; }
+
+  footer { border-top:1px solid var(--line); padding:32px 0 48px; color:var(--muted); font-size:14px; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+
+  @media (max-width:820px) {
+    .feature, .feature.rev { grid-template-columns:1fr; gap:24px; }
+    .feature.rev .txt { order:0; }
+    .grid3 { grid-template-columns:1fr; }
+    nav .links { display:none; }
+    section { padding:56px 0; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <nav>
+      <a class="brand" href="#"><img src="img/icon.png" alt="">Dossiers d'abos</a>
+      <div class="links">
+        <a href="#fonctions">Fonctions</a>
+        <a href="#installer">Installer</a>
+        <a href="#faq">FAQ</a>
+        <a href="https://github.com/RenzVASA/dossiers-abos-youtube">GitHub</a>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <span class="tag">🧩 Extension gratuite · Chrome, Opera GX, Edge, Brave</span>
+      <h1>Tes abonnements YouTube, <em>enfin rangés.</em></h1>
+      <p class="lead">Crée des dossiers, filtre ton fil Abonnements par dossier, et laisse le tri automatique ranger des centaines de chaînes en un clic.</p>
+      <div class="cta">
+        <a class="btn pri" href="https://github.com/RenzVASA/dossiers-abos-youtube/releases/latest">⬇ Télécharger</a>
+        <a class="btn sec" href="#installer">Comment l'installer</a>
+      </div>
+      <div class="small">Rien n'est envoyé nulle part. Tes vrais abonnements ne sont jamais modifiés.</div>
+      <img class="hero-shot" src="img/feed-dark.png" alt="Le fil Abonnements filtré sur le dossier Réparation, avec la section Dossiers dans la barre latérale">
+    </header>
+
+    <section id="fonctions">
+      <div class="kicker">Fonctions</div>
+      <h2>Tout ce qu'il manquait à YouTube</h2>
+      <p class="sub">L'extension s'intègre directement dans YouTube, en mode clair comme en mode sombre.</p>
+
+      <div class="feature">
+        <div class="txt">
+          <h3>📁 Un fil par dossier</h3>
+          <p>Des onglets apparaissent en haut de la page Abonnements. Un clic, et tu ne vois plus que les vidéos du dossier choisi.</p>
+          <ul>
+            <li>Section « Dossiers » dans la barre latérale</li>
+            <li>Onglet « Non classées » pour repérer les oublis</li>
+            <li>Emojis et couleurs au choix</li>
+          </ul>
+        </div>
+        <div class="shot"><img src="img/feed-light.png" alt="Fil Abonnements avec les onglets de dossiers" loading="lazy"></div>
+      </div>
+
+      <div class="feature rev">
+        <div class="txt">
+          <h3>✨ Tri automatique</h3>
+          <p>Importe ta liste d'abonnements, puis clique sur « Tri auto ». L'extension lit le nom et la description de chaque chaîne et propose un rangement. Tu valides avant que quoi que ce soit bouge.</p>
+          <ul>
+            <li>16 dossiers prêts à l'emploi</li>
+            <li>Ce que tu as rangé à la main ne bouge jamais</li>
+            <li>Règles modifiables dans <code>presets.js</code></li>
+          </ul>
+        </div>
+        <div class="shot"><img src="img/autosort.png" alt="Aperçu du tri automatique" loading="lazy"></div>
+      </div>
+
+      <div class="feature">
+        <div class="txt">
+          <h3>🗂️ Un vrai gestionnaire</h3>
+          <p>Toutes tes chaînes au même endroit. Recherche, filtre, glisse une chaîne sur un dossier, réordonne tes dossiers.</p>
+          <ul>
+            <li>Import automatique de tous tes abonnements</li>
+            <li>Glisser-déposer</li>
+            <li>Export et restauration de tes dossiers</li>
+          </ul>
+        </div>
+        <div class="shot"><img src="img/manager.png" alt="Gestionnaire de dossiers" loading="lazy"></div>
+      </div>
+
+      <div class="feature rev">
+        <div class="txt">
+          <h3>📌 Ranger en un clic</h3>
+          <p>Un bouton apparaît à côté de « S'abonner », sur chaque chaîne et sous chaque vidéo. Coche un dossier, ou crée-en un nouveau directement.</p>
+        </div>
+        <div class="shot"><img src="img/ranger-dark.png" alt="Bouton Ranger sur une page de chaîne" loading="lazy"></div>
+      </div>
+
+      <div class="grid3">
+        <div class="card"><div class="ico">🔒</div><h4>100 % local</h4><p>Tes dossiers restent dans ton navigateur. Aucun compte, aucun serveur, aucune pub.</p></div>
+        <div class="card"><div class="ico">🌗</div><h4>Clair et sombre</h4><p>S'adapte automatiquement au thème de YouTube.</p></div>
+        <div class="card"><div class="ico">🪶</div><h4>Léger</h4><p>Une seule permission : le stockage. Le code est ouvert, tu peux tout lire.</p></div>
+      </div>
+    </section>
+
+    <section id="installer">
+      <div class="kicker">Installation</div>
+      <h2>Prêt en 1 minute</h2>
+      <p class="sub">L'extension n'est pas (encore) sur le Chrome Web Store : on l'installe en mode développeur, c'est simple.</p>
+      <div class="steps">
+        <div class="step"><div><b>Télécharge le zip</b><span>Sur la page <a href="https://github.com/RenzVASA/dossiers-abos-youtube/releases/latest">Releases</a>, prends <code>dossiers-abos-youtube-v1.2.0.zip</code>, puis dézippe-le dans un dossier où il restera.</span></div></div>
+        <div class="step"><div><b>Ouvre la page des extensions</b><span><code>opera://extensions</code> sur Opera GX, <code>chrome://extensions</code> sur Chrome, <code>edge://extensions</code> sur Edge.</span></div></div>
+        <div class="step"><div><b>Active le mode développeur</b><span>L'interrupteur se trouve en haut à droite de la page.</span></div></div>
+        <div class="step"><div><b>Charge l'extension</b><span>Clique sur « Charger l'extension non empaquetée » et choisis le dossier dézippé.</span></div></div>
+        <div class="step"><div><b>Va sur YouTube</b><span>Ouvre tes Abonnements, clique sur « ➕ Créer des dossiers », puis sur « ⬇ Importer mes abonnements » et enfin sur « ✨ Tri auto ».</span></div></div>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="kicker">FAQ</div>
+      <h2>Questions fréquentes</h2>
+      <details><summary>Est-ce que ça modifie mes abonnements ?</summary><p>Non. L'extension ne touche jamais à tes vrais abonnements : elle ajoute seulement une couche de rangement par-dessus, dans ton navigateur.</p></details>
+      <details><summary>Mes dossiers sont-ils synchronisés entre mes appareils ?</summary><p>Pas automatiquement. Utilise « Exporter » dans le gestionnaire, puis « Restaurer » sur l'autre navigateur.</p></details>
+      <details><summary>Pourquoi un dossier n'affiche que quelques vidéos ?</summary><p>YouTube charge le fil petit à petit. Fais défiler la page pour charger d'autres vidéos : l'extension filtre au fur et à mesure.</p></details>
+      <details><summary>Un bouton a disparu après une mise à jour de YouTube</summary><p>YouTube modifie régulièrement son site. Tes dossiers restent sauvegardés. Ouvre un ticket sur GitHub avec une capture d'écran.</p></details>
+    </section>
+
+    <footer>
+      <span>Vibe codée par <a href="https://github.com/RenzVASA">RenzVASA</a>, avec l'aide de Claude, l'IA d'Anthropic.</span>
+      <span>Projet indépendant, non affilié à YouTube ni à Google · Licence MIT</span>
+    </footer>
+  </div>
+</body>
+</html>

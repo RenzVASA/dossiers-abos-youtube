@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Dossiers d'abos pour YouTube",
+  "short_name": "Dossiers d'abos",
+  "version": "1.2.0",
+  "description": "Range tes abonnements YouTube dans des dossiers et filtre ton fil Abonnements par dossier.",
+  "homepage_url": "https://github.com/RenzVASA/dossiers-abos-youtube",
+  "permissions": ["storage"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Dossiers d'abos",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": ["presets.js", "content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
